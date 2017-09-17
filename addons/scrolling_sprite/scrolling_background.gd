@@ -6,7 +6,7 @@ extends Node
 var _texture = null setget _private, _private
 var _speed_x = -1 setget _private, _private
 var _speed_y = 0 setget _private, _private
-var _scale = 0.2 setget _private, _private
+var _scale = 1 setget _private, _private
 var _screen_size setget _private, _private
 var _texture_size setget _private, _private
 
@@ -81,10 +81,10 @@ func _refresh_child():
 	_texture.flags = _texture.flags | ImageTexture.FLAG_REPEAT
 
 	var region_rect = Rect2(
-			0 - _texture_size.get_width() * _scale,
-			0 - _texture_size.get_height() * _scale,
-			_screen_size.width + _texture_size.get_width() * 2 * _scale,
-			_screen_size.height + _texture_size.get_height() * 2 * _scale
+			0,
+			0,
+			_screen_size.width / _scale + _texture_size.get_width() * 2 * _scale,
+			_screen_size.height / _scale + _texture_size.get_height() * 2 * _scale
 		)
 
 	spriteNode.set_region_rect(
@@ -93,6 +93,11 @@ func _refresh_child():
 	spriteNode.set_region(true)
 	spriteNode.set_centered(false)
 	spriteNode.set_scale(Vector2(_scale, _scale))
+	
+	var current_position = spriteNode.get_pos()
+	current_position.x = 0 - _texture_size.get_width() * _scale
+	current_position.y = 0 - _texture_size.get_height() * _scale
+	spriteNode.set_pos(current_position)
 
 # Update the position according to speed and reset
 # accordingly, so it looks like as if the background is 
@@ -112,15 +117,15 @@ func _fixed_process(delta):
 	current_position.y = current_position.y + _speed_y
 	
 	if (
-		current_position.x < 0 - _texture_size.get_width() * _scale ||
+		current_position.x < 0 - _texture_size.get_width() * _scale * 2 ||
 		current_position.x > 0
 	):
-		current_position.x = 0
+		current_position.x = 0 - _texture_size.get_width() * _scale
 	
 	if (
-		current_position.y < 0 - _texture_size.get_height() * _scale ||
+		current_position.y < 0 - _texture_size.get_height() * _scale * 2||
 		current_position.y > 0
 	):
-		current_position.y = 0
+		current_position.y = 0 - _texture_size.get_height() * _scale
 	
 	spriteNode.set_pos(current_position)
