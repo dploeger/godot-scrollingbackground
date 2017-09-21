@@ -81,11 +81,11 @@ func _refresh_child():
 	_texture.flags = _texture.flags | ImageTexture.FLAG_REPEAT
 
 	var region_rect = Rect2(
-			0,
-			0,
-			_screen_size.width / _scale + _texture_size.get_width() * 2 * _scale,
-			_screen_size.height / _scale + _texture_size.get_height() * 2 * _scale
-		)
+		0,
+		0,
+		(_screen_size.width + _texture_size.get_width() * 2) / _scale,
+		(_screen_size.height + _texture_size.get_height() * 2) / _scale
+	)
 
 	spriteNode.set_region_rect(
 		region_rect
