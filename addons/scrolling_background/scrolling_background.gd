@@ -9,6 +9,7 @@ var _speed_y = 0 setget _private, _private
 var _scale = 1 setget _private, _private
 var _screen_size setget _private, _private
 var _texture_size setget _private, _private
+var _modulate setget _private, _private
 
 func set_texture(texture): _texture = texture; _refresh_child()
 func get_texture(): return _texture
@@ -22,17 +23,22 @@ func get_speed_y(): return _speed_y
 func set_scale(scale): _scale = scale; _refresh_child()
 func get_scale(): return _scale
 
+func set_modulate(modulate): _modulate = modulate; _refresh_child()
+func get_modulate(): return _modulate
+
 func _get(property):
 	if property == "texture": return get_texture()
 	elif property == "speed_x": return get_speed_x()
 	elif property == "speed_y": return get_speed_y()
 	elif property == "scale": return get_scale()
+	elif property == "modulate": return get_modulate()
 
 func _set(property, value):
 	if property == "texture": set_texture(value)
 	elif property == "speed_x": set_speed_x(value)
 	elif property == "speed_y": set_speed_y(value)
 	elif property == "scale": set_scale(value)
+	elif property == "modulate": set_modulate(value)
 
 func _private(value = null):
 	print("Invalid access to private variable!")
@@ -46,7 +52,8 @@ func _get_property_list():
 		{type = TYPE_OBJECT, name = "texture", hint = PROPERTY_HINT_RESOURCE_TYPE, hint_string = "ImageTexture"},
 		{type = TYPE_INT, name = "speed_x"},
 		{type = TYPE_INT, name = "speed_y"},
-		{type = TYPE_REAL, name = "scale"}
+		{type = TYPE_REAL, name = "scale"},
+		{type = TYPE_COLOR, name = "modulate"}
 	]
 
 # Initialise node, once we're ready
@@ -79,6 +86,9 @@ func _refresh_child():
 	spriteNode.set_texture(_texture)
 	_texture_size = _texture.get_data()
 	_texture.flags = _texture.flags | ImageTexture.FLAG_REPEAT
+	
+	if _modulate != null:
+		spriteNode.set_modulate(_modulate)
 
 	var region_rect = Rect2(
 		0,

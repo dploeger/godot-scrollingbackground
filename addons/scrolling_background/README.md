@@ -3,6 +3,12 @@ A scrolling background node for Godot
 
 ![Scrolling Background Demo](https://media.giphy.com/media/VRxeMi2lV8y5i/giphy.gif)
 
+## Changelog
+
+* 2.0.0: Added modulate parameter
+* 1.0.1: Corrected sprite handling
+* 1.0.0: First release
+
 ## Features
 
 * 2D Scrolling background in all four directions
