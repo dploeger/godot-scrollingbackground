@@ -25,19 +25,36 @@ var modulate setget set_modulate, get_modulate
 
 # Setters/Getters
 
-func set_texture(texture): _texture = texture; _refresh_child()
+func set_texture(texture): 
+	_texture = texture
+	if not has_node("Background"):
+		_refresh_child()
+	else:
+		_update_texture()
+
 func get_texture(): return _texture
 
-func set_speed_x(speed): _speed_x = speed; _refresh_child()
+func set_speed_x(speed): _speed_x = speed
 func get_speed_x(): return _speed_x
 
-func set_speed_y(speed): _speed_y = speed; _refresh_child()
+func set_speed_y(speed): _speed_y = speed
 func get_speed_y(): return _speed_y
 
-func set_scale(scale): _scale = scale; _refresh_child()
+func set_scale(scale): _scale = scale
+	if not has_node("Background"):
+		_refresh_child()
+	else:
+		_update_texture()
+
 func get_scale(): return _scale
 
-func set_modulate(modulate): _modulate = modulate; _refresh_child()
+func set_modulate(modulate): 
+	_modulate = modulate
+	if not has_node("Background"):
+		_refresh_child()
+	else:
+		_update_modulate()
+		
 func get_modulate(): return _modulate
 
 # Property descriptor for the editor
@@ -76,14 +93,29 @@ func _refresh_child():
 		add_child(spriteNode)
 		
 	_screen_size = get_viewport().get_rect().size
-
+	
+	_update_modulate()
+	
+	_update_texture()
+	
 	var spriteNode = get_node("Background")
+	
+	var current_position = spriteNode.get_pos()
+	current_position.x = 0 - _texture_size.get_width() * _scale
+	current_position.y = 0 - _texture_size.get_height() * _scale
+	spriteNode.set_pos(current_position)
+
+func _update_modulate():
+	if _modulate != null:
+		var spriteNode = get_node("Background")
+		spriteNode.set_modulate(_modulate)
+
+func _update_texture():
+	var spriteNode = get_node("Background")
+	
 	spriteNode.set_texture(_texture)
 	_texture_size = _texture.get_data()
 	_texture.flags = _texture.flags | ImageTexture.FLAG_REPEAT
-	
-	if _modulate != null:
-		spriteNode.set_modulate(_modulate)
 
 	var region_rect = Rect2(
 		0,
@@ -99,11 +131,6 @@ func _refresh_child():
 	spriteNode.set_centered(false)
 	spriteNode.set_scale(Vector2(_scale, _scale))
 	
-	var current_position = spriteNode.get_pos()
-	current_position.x = 0 - _texture_size.get_width() * _scale
-	current_position.y = 0 - _texture_size.get_height() * _scale
-	spriteNode.set_pos(current_position)
-
 # Update the position according to speed and reset
 # accordingly, so it looks like as if the background is 
 # continously scrolling
@@ -134,3 +161,4 @@ func _fixed_process(delta):
 		current_position.y = 0 - _texture_size.get_height() * _scale
 	
 	spriteNode.set_pos(current_position)
+
