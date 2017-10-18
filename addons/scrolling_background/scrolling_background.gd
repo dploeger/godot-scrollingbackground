@@ -1,7 +1,7 @@
 tool
 extends Node
 
-# Property getters/setters
+# Private properties
 
 var _texture = null setget _private, _private
 var _speed_x = -1 setget _private, _private
@@ -10,6 +10,20 @@ var _scale = 1 setget _private, _private
 var _screen_size setget _private, _private
 var _texture_size setget _private, _private
 var _modulate setget _private, _private
+
+func _private(value = null):
+	print("Invalid access to private variable!")
+	return value
+
+# Public properties
+
+var texture setget set_texture, get_texture
+var speed_x setget set_speed_x, get_speed_x
+var speed_y setget set_speed_y, get_speed_y
+var scale setget set_scale, get_scale
+var modulate setget set_modulate, get_modulate
+
+# Setters/Getters
 
 func set_texture(texture): _texture = texture; _refresh_child()
 func get_texture(): return _texture
@@ -25,24 +39,6 @@ func get_scale(): return _scale
 
 func set_modulate(modulate): _modulate = modulate; _refresh_child()
 func get_modulate(): return _modulate
-
-func _get(property):
-	if property == "texture": return get_texture()
-	elif property == "speed_x": return get_speed_x()
-	elif property == "speed_y": return get_speed_y()
-	elif property == "scale": return get_scale()
-	elif property == "modulate": return get_modulate()
-
-func _set(property, value):
-	if property == "texture": set_texture(value)
-	elif property == "speed_x": set_speed_x(value)
-	elif property == "speed_y": set_speed_y(value)
-	elif property == "scale": set_scale(value)
-	elif property == "modulate": set_modulate(value)
-
-func _private(value = null):
-	print("Invalid access to private variable!")
-	return value
 
 # Property descriptor for the editor
 
@@ -74,8 +70,7 @@ func _refresh_child():
 		# We don't yet have a viewport.
 		return
 	
-	if get_node("Background") == null:
-		print("Creating background node")
+	if not has_node("Background"):
 		var spriteNode = Sprite.new()
 		spriteNode.set_name("Background")
 		add_child(spriteNode)
