@@ -5,6 +5,7 @@ A scrolling background node for Godot
 
 ## Changelog
 
+* 2.0.1: Fixed property handling for better automation support
 * 2.0.0: Added modulate parameter
 * 1.0.1: Corrected sprite handling
 * 1.0.0: First release
