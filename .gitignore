@@ -1,1 +1,5 @@
-engine.cfg
+project.godot
+test.tscn
+import
+*.import
+*.flags

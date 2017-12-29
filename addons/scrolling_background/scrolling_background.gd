@@ -40,7 +40,8 @@ func get_speed_x(): return _speed_x
 func set_speed_y(speed): _speed_y = speed
 func get_speed_y(): return _speed_y
 
-func set_scale(scale): _scale = scale
+func set_scale(scale): 
+	_scale = scale
 	if not has_node("Background"):
 		_refresh_child()
 	else:
@@ -62,7 +63,7 @@ func get_modulate(): return _modulate
 func _get_property_list():
 	return [
 		{usage = PROPERTY_USAGE_CATEGORY, type = TYPE_NIL, name = "ScrollingBackground"},
-		{type = TYPE_OBJECT, name = "texture", hint = PROPERTY_HINT_RESOURCE_TYPE, hint_string = "ImageTexture"},
+		{type = TYPE_OBJECT, name = "texture", hint = PROPERTY_HINT_RESOURCE_TYPE, hint_string = "StreamTexture"},
 		{type = TYPE_INT, name = "speed_x"},
 		{type = TYPE_INT, name = "speed_y"},
 		{type = TYPE_REAL, name = "scale"},
@@ -73,7 +74,6 @@ func _get_property_list():
 
 func _ready():
 	_refresh_child()
-	set_fixed_process(true)
 
 # Update the Background node based on settings
 
@@ -92,7 +92,7 @@ func _refresh_child():
 		spriteNode.set_name("Background")
 		add_child(spriteNode)
 		
-	_screen_size = get_viewport().get_rect().size
+	_screen_size = get_viewport().get_visible_rect().size
 	
 	_update_modulate()
 	
@@ -100,10 +100,10 @@ func _refresh_child():
 	
 	var spriteNode = get_node("Background")
 	
-	var current_position = spriteNode.get_pos()
+	var current_position = spriteNode.position
 	current_position.x = 0 - _texture_size.get_width() * _scale
 	current_position.y = 0 - _texture_size.get_height() * _scale
-	spriteNode.set_pos(current_position)
+	spriteNode.position = current_position
 
 func _update_modulate():
 	if _modulate != null:
@@ -115,13 +115,13 @@ func _update_texture():
 	
 	spriteNode.set_texture(_texture)
 	_texture_size = _texture.get_data()
-	_texture.flags = _texture.flags | ImageTexture.FLAG_REPEAT
+	_texture.set_flags(_texture.get_flags() | Texture.FLAG_REPEAT)
 
 	var region_rect = Rect2(
 		0,
 		0,
-		(_screen_size.width + _texture_size.get_width() * 2) / _scale,
-		(_screen_size.height + _texture_size.get_height() * 2) / _scale
+		_screen_size.x + _texture_size.get_width() * 2 * _scale,
+		_screen_size.y + _texture_size.get_height() * 2 * _scale
 	)
 
 	spriteNode.set_region_rect(
@@ -135,7 +135,7 @@ func _update_texture():
 # accordingly, so it looks like as if the background is 
 # continously scrolling
 
-func _fixed_process(delta):
+func _physics_process(delta):
 	
 	if _texture == null:
 		# Texture not set. Returning early
@@ -143,7 +143,7 @@ func _fixed_process(delta):
 	
 	var spriteNode = get_node("Background")
 	
-	var current_position = spriteNode.get_pos()
+	var current_position = spriteNode.position
 	
 	current_position.x = current_position.x + _speed_x
 	current_position.y = current_position.y + _speed_y
@@ -160,5 +160,5 @@ func _fixed_process(delta):
 	):
 		current_position.y = 0 - _texture_size.get_height() * _scale
 	
-	spriteNode.set_pos(current_position)
+	spriteNode.position = current_position
 
