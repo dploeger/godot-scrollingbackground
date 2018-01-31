@@ -113,23 +113,22 @@ func _update_modulate():
 func _update_texture():
 	var spriteNode = get_node("Background")
 	
-	spriteNode.set_texture(_texture)
+	spriteNode.texture = _texture
 	_texture_size = _texture.get_data()
 	_texture.set_flags(_texture.get_flags() | Texture.FLAG_REPEAT)
 
 	var region_rect = Rect2(
 		0,
 		0,
-		_screen_size.x + _texture_size.get_width() * 2 * _scale,
-		_screen_size.y + _texture_size.get_height() * 2 * _scale
+		ceil(_screen_size.x / _scale) + _texture_size.get_width() * 2,
+		ceil(_screen_size.y / _scale) + _texture_size.get_height() * 2
 	)
 
-	spriteNode.set_region_rect(
-		region_rect
-	)
-	spriteNode.set_region(true)
-	spriteNode.set_centered(false)
-	spriteNode.set_scale(Vector2(_scale, _scale))
+	spriteNode.region_enabled = true
+	spriteNode.region_rect = region_rect
+	
+	spriteNode.centered = false
+	spriteNode.scale = Vector2(_scale, _scale)
 	
 # Update the position according to speed and reset
 # accordingly, so it looks like as if the background is 
