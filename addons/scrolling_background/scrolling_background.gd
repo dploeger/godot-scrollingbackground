@@ -3,16 +3,21 @@ extends Node
 
 # Private properties
 
-var _texture = null setget _private, _private
-var _speed_x = -1 setget _private, _private
-var _speed_y = 0 setget _private, _private
-var _scale = 1 setget _private, _private
-var _screen_size setget _private, _private
-var _modulate setget _private, _private
-
-func _private(value = null):
+func _privateget():
+	print("Invalid access to private variable!")
+	return null
+	
+func _privateset(value = null):
 	print("Invalid access to private variable!")
 	return value
+
+var _texture = null setget _privateset, _privateget
+var _speed_x = -1 setget _privateset, _privateget
+var _speed_y = 0 setget _privateset, _privateget
+var _scale = 1 setget _privateset, _privateget
+var _screen_size setget _privateset, _privateget
+var _texture_size setget _privateset, _privateget
+var _modulate setget _privateset, _privateget
 
 # Public properties
 
@@ -100,8 +105,8 @@ func _refresh_child():
 	var spriteNode = get_node("Background")
 	
 	var current_position = spriteNode.position
-	current_position.x = 0 - _texture.get_width() * _scale
-	current_position.y = 0 - _texture.get_height() * _scale
+	current_position.x = 0 - _texture_size.get_width() * _scale
+	current_position.y = 0 - _texture_size.get_height() * _scale
 	spriteNode.position = current_position
 
 func _update_modulate():
@@ -113,13 +118,14 @@ func _update_texture():
 	var spriteNode = get_node("Background")
 	
 	spriteNode.texture = _texture
+	_texture_size = _texture.get_data()
 	_texture.set_flags(_texture.get_flags() | Texture.FLAG_REPEAT)
 
 	var region_rect = Rect2(
 		0,
 		0,
-		ceil(_screen_size.x / _scale) + _texture.get_width() * 2,
-		ceil(_screen_size.y / _scale) + _texture.get_height() * 2
+		ceil(_screen_size.x / _scale) + _texture_size.get_width() * 2,
+		ceil(_screen_size.y / _scale) + _texture_size.get_height() * 2
 	)
 
 	spriteNode.region_enabled = true
@@ -146,16 +152,16 @@ func _physics_process(delta):
 	current_position.y = current_position.y + _speed_y
 	
 	if (
-		current_position.x < 0 - _texture.get_width() * _scale * 2 ||
+		current_position.x < 0 - _texture_size.get_width() * _scale * 2 ||
 		current_position.x > 0
 	):
-		current_position.x = 0 - _texture.get_width() * _scale
+		current_position.x = 0 - _texture_size.get_width() * _scale
 	
 	if (
-		current_position.y < 0 - _texture.get_height() * _scale * 2||
+		current_position.y < 0 - _texture_size.get_height() * _scale * 2||
 		current_position.y > 0
 	):
-		current_position.y = 0 - _texture.get_height() * _scale
+		current_position.y = 0 - _texture_size.get_height() * _scale
 	
 	spriteNode.position = current_position
 
